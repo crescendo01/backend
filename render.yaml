@@ -1,0 +1,52 @@
+# Render "Blueprint" spec — https://render.com/docs/infrastructure-as-code
+#
+# Easiest path: push this repo to GitHub, then in the Render dashboard
+# choose "New +" -> "Blueprint" and point it at the repo. Render reads
+# this file and creates the service with the right build/start commands
+# already filled in; you only need to fill in the secret env vars marked
+# `sync: false` below (Render will prompt you for these in the dashboard —
+# they're deliberately not stored in this file).
+#
+# Prefer to click through "New +" -> "Web Service" by hand instead?
+# Use these same values:
+#   Runtime:        Python 3
+#   Build Command:  pip install -r requirements.txt
+#   Start Command:  uvicorn app.main:app --host 0.0.0.0 --port $PORT
+#   Health Check Path: /healthz
+
+services:
+  - type: web
+    name: crescendo-backend
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: FIREBASE_PROJECT_ID
+        value: crescendo-xd
+      - key: SUPABASE_STORAGE_BUCKET
+        value: recordings
+      - key: REALTIME_POLL_INTERVAL_SECONDS
+        value: "2.0"
+      - key: RATE_LIMIT_FEEDBACK_PER_MINUTE
+        value: "30"
+      # Secrets — set these in the Render dashboard, not here:
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON_BASE64
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false

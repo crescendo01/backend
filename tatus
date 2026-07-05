@@ -1,0 +1,54 @@
+[33mcommit b4f1f381f632be4d04c29b424e52aa2a7045be6e[m
+Author: Neil Surjiani <surjianineil@gmail.com>
+Date:   Sun Jul 5 15:11:08 2026 +0530
+
+    delete
+
+ .env.example                             |  65 [32m++++++++[m
+ .gitignore                               |  10 [32m++[m
+ Dockerfile                               |  25 [32m+++[m
+ README.md                                | 185 [32m++++++++++++++++++++[m
+ app/__init__.py                          |   0
+ app/config.py                            | 117 [32m+++++++++++++[m
+ app/dependencies.py                      |  45 [32m+++++[m
+ app/firebase.py                          | 122 [32m++++++++++++++[m
+ app/main.py                              | 219 [32m++++++++++++++++++++++++[m
+ app/middleware.py                        |  72 [32m++++++++[m
+ app/realtime.py                          |  67 [32m++++++++[m
+ app/routers/__init__.py                  |   0
+ app/routers/achievements.py              |  55 [32m++++++[m
+ app/routers/auth.py                      |  45 [32m+++++[m
+ app/routers/ear_training.py              | 278 [32m+++++++++++++++++++++++++++++++[m
+ app/routers/feedback.py                  |  19 [32m+++[m
+ app/routers/health.py                    |  14 [32m++[m
+ app/routers/leaderboard.py               | 174 [32m+++++++++++++++++++[m
+ app/routers/lessons.py                   | 131 [32m+++++++++++++++[m
+ app/routers/recordings.py                | 111 [32m++++++++++++[m
+ app/routers/songs.py                     | 122 [32m++++++++++++++[m
+ app/routers/users.py                     | 199 [32m++++++++++++++++++++++[m
+ app/schemas.py                           | 145 [32m++++++++++++++++[m
+ app/services/__init__.py                 |   0
+ app/services/gemini_service.py           | 157 [32m+++++++++++++++++[m
+ app/supabase_client.py                   | 219 [32m++++++++++++++++++++++++[m
+ pytest.ini                               |   4 [32m+[m
+ render.yaml                              |  52 [32m++++++[m
+ requirements-dev.txt                     |   3 [32m+[m
+ requirements.txt                         |   8 [32m+[m
+ scripts/backfill_existing_users_claim.py |  66 [32m++++++++[m
+ tests/conftest.py                        |  75 [32m+++++++++[m
+ tests/fakes.py                           | 127 [32m++++++++++++++[m
+ tests/test_achievements.py               |  47 [32m++++++[m
+ tests/test_auth.py                       |  31 [32m++++[m
+ tests/test_ear_training.py               | 155 [32m+++++++++++++++++[m
+ tests/test_feedback.py                   | 115 [32m+++++++++++++[m
+ tests/test_health.py                     |  29 [32m++++[m
+ tests/test_leaderboard.py                |  83 [32m+++++++++[m
+ tests/test_lessons.py                    | 139 [32m++++++++++++++++[m
+ tests/test_rate_limit.py                 |  41 [32m+++++[m
+ tests/test_realtime.py                   | 124 [32m++++++++++++++[m
+ tests/test_recordings.py                 |  75 [32m+++++++++[m
+ tests/test_songs.py                      | 127 [32m++++++++++++++[m
+ tests/test_supabase_client.py            | 188 [32m+++++++++++++++++++++[m
+ tests/test_users.py                      |  51 [32m++++++[m
+ tests/test_websockets.py                 |  83 [32m+++++++++[m
+ 47 files changed, 4219 insertions(+)
