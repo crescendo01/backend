@@ -35,6 +35,26 @@ class FeedbackResponse(BaseModel):
     )
 
 
+class LessonQuestionRequest(BaseModel):
+    lesson_id: str = Field(min_length=1, max_length=100)
+    question: str = Field(min_length=1, max_length=500)
+    # Last few turns of this Q&A thread, oldest first, so follow-up
+    # questions ("what about the second one?") have context. Kept short —
+    # this isn't meant to be an open-ended chat history, just enough for
+    # natural back-and-forth within one lesson's doubts.
+    history: list["LessonQuestionTurn"] = Field(default_factory=list, max_length=12)
+
+
+class LessonQuestionTurn(BaseModel):
+    role: str = Field(pattern="^(user|assistant)$")
+    text: str = Field(min_length=1, max_length=1000)
+
+
+class LessonQuestionResponse(BaseModel):
+    answer: str
+    source: str
+
+
 # --- Lessons / songs ---------------------------------------------------------
 
 class LessonAttemptRequest(BaseModel):

@@ -7,7 +7,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.dependencies import CurrentUser, get_current_user
-from app.schemas import LessonAttemptRequest
+from app.schemas import LessonAttemptRequest, LessonQuestionRequest, LessonQuestionResponse
+from app.services.gemini_service import answer_lesson_question
 from app.supabase_client import SupabaseRest, get_supabase
 
 router = APIRouter(prefix="/v1/lessons", tags=["lessons"])
@@ -24,7 +25,7 @@ async def list_lessons(
     _current_user: CurrentUser = Depends(get_current_user),
     supabase: SupabaseRest = Depends(get_supabase),
 ):
-    filters = {"instrument": f"eq.{instrument}"}
+    filters = {"instrument": f"eq.{instrument}", "is_active": "eq.true"}
     if type is not None:
         filters["type"] = f"eq.{type}"
     if max_difficulty is not None:
@@ -87,6 +88,7 @@ async def get_next_lesson(
             "instrument": f"eq.{current['instrument']}",
             "type": f"eq.{current['type']}",
             "order_in_series": f"gt.{current['order_in_series']}",
+            "is_active": "eq.true",
         },
         order="order_in_series",
         limit=1,
@@ -129,3 +131,28 @@ async def record_attempt(
         return await supabase.insert(USER_PROGRESS, row)
     rows = await supabase.update(USER_PROGRESS, row, filters={"id": f"eq.{existing['id']}"})
     return rows[0] if rows else row
+
+
+@router.post("/{lesson_id}/ask", response_model=LessonQuestionResponse)
+async def ask_question(
+    lesson_id: str,
+    payload: LessonQuestionRequest,
+    _current_user: CurrentUser = Depends(get_current_user),
+    supabase: SupabaseRest = Depends(get_supabase),
+):
+    """Gemini-backed "ask a doubt" for whichever lesson the student is
+    currently reading — kept server-side (see gemini_service.py) same as
+    practice feedback, so GEMINI_API_KEY never ships in the Flutter binary.
+    """
+    lesson = await supabase.select(LESSONS, filters={"id": f"eq.{lesson_id}"}, single=True)
+    if lesson is None:
+        raise HTTPException(status_code=404, detail="Lesson not found.")
+
+    answer, source = await answer_lesson_question(
+        lesson_id=lesson_id,
+        lesson_title=lesson.get("title", ""),
+        content_json=lesson.get("content_json") or {},
+        question=payload.question,
+        history=payload.history,
+    )
+    return LessonQuestionResponse(answer=answer, source=source)
