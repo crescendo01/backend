@@ -222,6 +222,9 @@ async def answer_lesson_question(
 
     logger.error("All Gemini models in fallback chain failed for lesson Q&A key=%s", cache_key)
     return _fallback_qa_answer(), "fallback"
+
+
+async def generate_feedback(req: FeedbackRequest) -> tuple[str, str]:
     """Returns (feedback_text, source) where source is gemini:<model>|fallback|cache."""
     settings = get_settings()
     key = _cache_key(req)
